@@ -47,8 +47,8 @@ RUN echo 'Creating notroot docker user and group from host' && \
     groupadd -g $HOST_USER_GID docker && \
     useradd -lm -u $HOST_USER_UID -g $HOST_USER_GID docker
 
-#  Add new user docker user to php-fpm group
-RUN usermod -a -G php-fpm docker
+#  Add new user docker user to php-fpm (apache) group
+RUN usermod -a -G apache docker
 # give docker user sudo access
 RUN usermod -aG wheel docker
 # give docker user access to /dev/stdout and /dev/stderror
