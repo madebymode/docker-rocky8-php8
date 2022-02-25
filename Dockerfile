@@ -1,6 +1,9 @@
 FROM rockylinux:8
 MAINTAINER madebymode
 
+ARG HOST_USER_UID=1000
+ARG HOST_USER_GID=1000
+
 # update dnf
 RUN dnf -y update
 RUN dnf -y install dnf-utils
@@ -25,6 +28,9 @@ RUN dnf -y install yum-utils mysql rsync wget git
 # correct php install
 RUN  dnf -y install php-{cli,fpm,mysqlnd,zip,devel,gd,mbstring,curl,xml,pear,bcmath,json}
 
+#fixes ERROR: failed to open error_log (/var/log/php-fpm/error.log): Permission denied (13), which running php-fpm as docker user
+RUN sed -e '/^error_log\s\=\s\/var\/log\/php-fpm\/error.log/s//error_log = \/dev\/stderr/' -i /etc/php-fpm.conf
+
 # Update and install latest packages and prerequisites
 RUN dnf update -y \
     && dnf install -y --nogpgcheck --setopt=tsflags=nodocs \
@@ -32,7 +38,28 @@ RUN dnf update -y \
         unzip \
     && dnf clean all && dnf history new
 
-RUN curl -sS https://getcomposer.org/installer | php --  --install-dir=/usr/local/bin --filename=composer
+#composer 1.10
+RUN curl -sS https://getcomposer.org/installer | php -- --version=1.10.17 --install-dir=/usr/local/bin --filename=composer
+#composer 2
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer2
+
+RUN echo 'Creating notroot docker user and group from host' && \
+    groupadd -g $HOST_USER_GID docker && \
+    useradd -lm -u $HOST_USER_UID -g $HOST_USER_GID docker
+
+#  Add new user docker user to php-fpm group
+RUN usermod -a -G php-fpm docker
+# give docker user sudo access
+RUN usermod -aG wheel docker
+# give docker user access to /dev/stdout and /dev/stderror
+RUN usermod -aG tty docker
+
+# Ensure sudo group users are not
+# asked for a password when using
+# sudo command by ammending sudoers file
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+USER docker
 
 RUN sed -e 's/\/run\/php\-fpm\/www.sock/9000/' \
         -e '/allowed_clients/d' \
