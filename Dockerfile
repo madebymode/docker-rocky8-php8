@@ -43,6 +43,13 @@ RUN curl -sS https://getcomposer.org/installer | php -- --version=1.10.17 --inst
 #composer 2
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer2
 
+
+RUN sed -e 's/\/run\/php\-fpm\/www.sock/9000/' \
+        -e '/allowed_clients/d' \
+        -e '/catch_workers_output/s/^;//' \
+        -e '/error_log/d' \
+        -i /etc/php-fpm.d/www.conf
+
 RUN echo 'Creating notroot docker user and group from host' && \
     groupadd -g $HOST_USER_GID docker && \
     useradd -lm -u $HOST_USER_UID -g $HOST_USER_GID docker
@@ -61,11 +68,7 @@ RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 USER docker
 
-RUN sed -e 's/\/run\/php\-fpm\/www.sock/9000/' \
-        -e '/allowed_clients/d' \
-        -e '/catch_workers_output/s/^;//' \
-        -e '/error_log/d' \
-        -i /etc/php-fpm.d/www.conf
+
 
 RUN mkdir /run/php-fpm
 
