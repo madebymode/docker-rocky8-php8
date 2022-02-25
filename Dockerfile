@@ -50,6 +50,9 @@ RUN sed -e 's/\/run\/php\-fpm\/www.sock/9000/' \
         -e '/error_log/d' \
         -i /etc/php-fpm.d/www.conf
 
+
+RUN mkdir /run/php-fpm        
+
 RUN echo 'Creating notroot docker user and group from host' && \
     groupadd -g $HOST_USER_GID docker && \
     useradd -lm -u $HOST_USER_UID -g $HOST_USER_GID docker
@@ -69,8 +72,6 @@ RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER docker
 
 
-
-RUN mkdir /run/php-fpm
 
 CMD ["php-fpm", "-F"]
 
