@@ -23,7 +23,7 @@ RUN  dnf module reset php -y
 RUN dnf module install php:remi-8.0 -y
 
 # other binaries
-RUN dnf -y install yum-utils mysql rsync wget git sudo 
+RUN dnf -y install yum-utils mysql rsync wget git sudo which
 
 # correct php install
 RUN  dnf -y install php-{cli,fpm,mysqlnd,zip,devel,gd,mbstring,curl,xml,pear,bcmath,json}
