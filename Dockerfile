@@ -26,7 +26,7 @@ RUN dnf module install php:remi-8.0 -y
 RUN dnf -y install yum-utils mysql rsync wget git sudo which
 
 # correct php install
-RUN  dnf -y install php-{cli,fpm,mysqlnd,zip,devel,gd,mbstring,curl,xml,pear,bcmath,json}
+RUN  dnf -y install php-{cli,fpm,mysqlnd,zip,devel,gd,mbstring,curl,xml,pear,bcmath,json,intl}
 
 #fixes  ERROR: Unable to create the PID file (/run/php-fpm/php-fpm.pid).: No such file or directory (2)
 RUN sed -e '/^pid/s//;pid/' -i /etc/php-fpm.conf
