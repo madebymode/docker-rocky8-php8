@@ -88,10 +88,10 @@ RUN sed -e '/^php_value\[soap.wsdl_cache_dir\]/s//\;php_value\[soap.wsdl_cache_d
 # fix php perms
 RUN chown apache:apache -R /var/lib/php/
 
-# Ensure sudo group users are not
+# Ensure wheel group users are not
 # asked for a password when using
 # sudo command by ammending sudoers file
-RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+RUN echo '%wheel ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 USER docker
 
