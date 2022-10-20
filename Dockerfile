@@ -70,10 +70,10 @@ RUN usermod -aG wheel docker
 # give docker user access to /dev/stdout and /dev/stderror
 RUN usermod -aG tty docker
 
-# Ensure sudo group users are not
+# Ensure wheel group users are not
 # asked for a password when using
 # sudo command by ammending sudoers file
-RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+RUN echo '%wheel ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 USER docker
 
